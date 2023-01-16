@@ -10,6 +10,7 @@ const {
   addContact,
   removeContact,
   updateContact,
+  updateContactFavorite,
 } = require("../../controllers/contacts.controller");
 
 const router = express.Router();
@@ -20,12 +21,14 @@ router.get("/:contactId", tryCatchWrapper(getContactById));
 
 router.post("/", validateBody(addContactsSchema), tryCatchWrapper(addContact));
 
-router.delete("/:contactId", tryCatchWrapper(removeContact));
+router.delete("/:contactId", removeContact);
 
 router.put(
   "/:contactId",
   validateBody(addContactsSchema),
   tryCatchWrapper(updateContact)
 );
+
+router.patch("/:contactId/favorite", tryCatchWrapper(updateContactFavorite));
 
 module.exports = router;

@@ -10,7 +10,7 @@ const addContactsSchema = Joi.object({
   email: Joi.string().min(3).required().messages({
     "any.required": "you should provide email!!",
   }),
-  phone: Joi.number().min(3).required().messages({
+  phone: Joi.string().min(3).required().messages({
     "any.required": "you should provide phone!!",
   }),
 });
