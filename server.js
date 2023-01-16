@@ -10,12 +10,6 @@ async function main() {
   try {
     await mongoose.connect(HOST_URI);
 
-    // const response = await Contacts.create({
-    //   name: "asdhasdhashd",
-    //   email: "ahdkasgdgasdgas",
-    //   phone: "sahjayciass12312321",
-    //   favorite: true,
-    // });
     console.log("Database connection successful");
 
     app.listen(3000, () => {

@@ -21,7 +21,7 @@ router.get("/:contactId", tryCatchWrapper(getContactById));
 
 router.post("/", validateBody(addContactsSchema), tryCatchWrapper(addContact));
 
-router.delete("/:contactId", tryCatchWrapper(removeContact));
+router.delete("/:contactId", removeContact);
 
 router.put(
   "/:contactId",

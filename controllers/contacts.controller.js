@@ -10,13 +10,14 @@ async function listContacts(req, res, next) {
 }
 
 async function getContactById(req, res, next) {
-  const { contactId } = req.params;
-  const contact = await Contacts.findById(contactId);
-
-  if (!contact) {
-    return next(HttpError(404, "Movie not found"));
+  try {
+    const { contactId } = req.params;
+    const contact = await Contacts.findById(contactId);
+    return res.json(contact);
+  } catch (error) {
+    console.error(error);
+    next(HttpError(404, "Movie not found"));
   }
-  return res.json(contact);
 }
 
 async function addContact(req, res, next) {
@@ -25,13 +26,14 @@ async function addContact(req, res, next) {
 }
 
 async function removeContact(req, res, next) {
-  const { contactId } = req.params;
-  const contact = await Contacts.findById(contactId);
-  if (!contact) {
+  try {
+    const { contactId } = req.params;
+    const contact = await Contacts.findByIdAndRemove(contactId);
+    res.status(200).json(contact);
+  } catch (error) {
+    console.error(error);
     next(HttpError(404, "No movie"));
   }
-  await Contacts.findByIdAndRemove(contactId);
-  res.status(200).json(contact);
 }
 
 async function updateContact(req, res, next) {
@@ -43,20 +45,20 @@ async function updateContact(req, res, next) {
 }
 
 async function updateContactFavorite(req, res, next) {
-  const { contactId } = req.params;
+  try {
+    const { contactId } = req.params;
+    const { favorite } = req.body;
 
-  const { favorite } = req.body;
-
-  if (!(favorite === false || favorite === true)) {
-    return res.status(400).json({ message: "missing field favorite" });
+    const updateContact = await Contacts.findByIdAndUpdate(
+      contactId,
+      { favorite },
+      { new: true }
+    );
+    res.status(200).json(updateContact);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "missing field favorite" });
   }
-
-  const updateContact = await Contacts.updateStatusContact(
-    contactId,
-    { favorite },
-    { new: true }
-  );
-  res.status(200).json(updateContact);
 }
 
 module.exports = {
