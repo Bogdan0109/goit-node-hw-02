@@ -31,12 +31,6 @@ async function register(req, res, next) {
   }
 }
 
-/**
- * 1. Find user by email
- * 2. If user not exists => throw an error 401
- * 3. If user exists => check password
- * 4. If password is the same => then return 200
- */
 async function login(req, res, next) {
   const { email, password } = req.body;
 
