@@ -1,8 +1,11 @@
 const { Users } = require("../models/users");
 const { HttpError } = require("../helpers");
+
+const jwt = require("jsonwebtoken");
+
 const bcrypt = require("bcrypt");
 
-async function register(req, res, next) {
+async function signup(req, res, next) {
   const { email, password } = req.body;
 
   const salt = await bcrypt.genSalt();
@@ -48,14 +51,19 @@ async function login(req, res, next) {
     throw new HttpError(401, "password is not valid");
   }
 
+  const token = jwt.sign({ id: storedUsers._id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
   return res.json({
     data: {
-      token: "<TOKEN>",
+      token,
+      user: { email, password },
     },
   });
 }
 
 module.exports = {
-  register,
+  signup,
   login,
 };

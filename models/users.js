@@ -19,6 +19,13 @@ const schema = mongoose.Schema({
     type: String,
     default: null,
   },
+  contacts: {
+    type: [mongoose.Types.ObjectId],
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+  },
 });
 
 const Users = mongoose.model("users", schema);
