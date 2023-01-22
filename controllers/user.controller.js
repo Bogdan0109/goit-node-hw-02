@@ -1,3 +1,4 @@
+const { Contacts } = require("../models/contact");
 const { Users } = require("../models/users");
 
 async function createContacts(req, res, next) {
@@ -16,12 +17,12 @@ async function createContacts(req, res, next) {
 
 async function getContacts(req, res, next) {
   const { user } = req;
-  console.log("🚀 ~ file: user.controller.js:19 ~ getContacts ~ user", user);
   const userWithContacts = await Users.findById(user._id).populate("contacts", {
     title: 1,
     year: 1,
     _id: 1,
   });
+  console.log("userWithContacts", userWithContacts);
 
   return res.status(200).json({
     data: {
