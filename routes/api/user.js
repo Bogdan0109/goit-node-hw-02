@@ -13,11 +13,13 @@ userRouter.post(
   tryCatchWrapper(auth),
   tryCatchWrapper(createContacts)
 );
+
 userRouter.get(
   "/contacts",
   tryCatchWrapper(auth),
   tryCatchWrapper(getContacts)
 );
+
 userRouter.get("/me", tryCatchWrapper(auth), tryCatchWrapper(me));
 
 module.exports = {

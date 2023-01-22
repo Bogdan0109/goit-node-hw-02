@@ -1,4 +1,4 @@
-const { Contacts } = require("../models/contact");
+// const { Contacts } = require("../models/contact");
 const { Users } = require("../models/users");
 
 async function createContacts(req, res, next) {
@@ -18,8 +18,10 @@ async function createContacts(req, res, next) {
 async function getContacts(req, res, next) {
   const { user } = req;
   const userWithContacts = await Users.findById(user._id).populate("contacts", {
-    title: 1,
-    year: 1,
+    name: 1,
+    email: 1,
+    phone: 1,
+    favorite: 1,
     _id: 1,
   });
   console.log("userWithContacts", userWithContacts);
@@ -33,7 +35,6 @@ async function getContacts(req, res, next) {
 
 async function me(req, res, next) {
   const { user } = req;
-  console.log("🚀 ~ file: user.controller.js:34 ~ me ~ user", user);
   const { email, _id: id, token } = user;
 
   return res.status(200).json({

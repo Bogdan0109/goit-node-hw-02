@@ -19,9 +19,12 @@ const schema = mongoose.Schema({
     type: String,
     default: null,
   },
-  contacts: {
-    type: [mongoose.Types.ObjectId],
-  },
+  contacts: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "contacts",
+    },
+  ],
 });
 
 const Users = mongoose.model("users", schema);
