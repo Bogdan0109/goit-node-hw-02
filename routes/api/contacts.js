@@ -13,22 +13,29 @@ const {
   updateContactFavorite,
 } = require("../../controllers/contacts.controller");
 
-const router = express.Router();
+const contactsRouter = express.Router();
 
-router.get("/", tryCatchWrapper(listContacts));
+contactsRouter.get("/", tryCatchWrapper(listContacts));
 
-router.get("/:contactId", tryCatchWrapper(getContactById));
+contactsRouter.get("/:contactId", tryCatchWrapper(getContactById));
 
-router.post("/", validateBody(addContactsSchema), tryCatchWrapper(addContact));
+contactsRouter.post(
+  "/",
+  validateBody(addContactsSchema),
+  tryCatchWrapper(addContact)
+);
 
-router.delete("/:contactId", removeContact);
+contactsRouter.delete("/:contactId", removeContact);
 
-router.put(
+contactsRouter.put(
   "/:contactId",
   validateBody(addContactsSchema),
   tryCatchWrapper(updateContact)
 );
 
-router.patch("/:contactId/favorite", tryCatchWrapper(updateContactFavorite));
+contactsRouter.patch(
+  "/:contactId/favorite",
+  tryCatchWrapper(updateContactFavorite)
+);
 
-module.exports = router;
+module.exports = { contactsRouter };

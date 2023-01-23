@@ -4,14 +4,17 @@ const { HttpError } = require("../helpers/index.js");
 const { Contacts } = require("../models/contact");
 
 async function listContacts(req, res, next) {
-  const { limit } = req.query;
-  const contact = await Contacts.find({}).limit(limit);
+  const { limit = 5, page = 1 } = req.query;
+  const skip = (page - 1) * limit;
+
+  const contact = await Contacts.find({}).skip(skip).limit(limit);
   res.json(contact);
 }
 
 async function getContactById(req, res, next) {
   try {
     const { contactId } = req.params;
+   
     const contact = await Contacts.findById(contactId);
     return res.json(contact);
   } catch (error) {
