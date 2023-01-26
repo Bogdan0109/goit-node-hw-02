@@ -48,8 +48,23 @@ async function me(req, res, next) {
   });
 }
 
+async function logout(req, res, next) {
+  try {
+    const { user } = req;
+    const { _id: id } = user;
+
+    await Users.findByIdAndUpdate(id, { token: "" });
+    return res.status(204).json({
+      message: "Logout was successfull",
+    });
+  } catch (error) {
+    res.status(401).json({ message: "Not authorized" });
+  }
+}
+
 module.exports = {
   createContacts,
   getContacts,
   me,
+  logout,
 };

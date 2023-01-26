@@ -55,6 +55,8 @@ async function login(req, res, next) {
     expiresIn: "1h",
   });
 
+  await Users.findByIdAndUpdate(storedUsers._id, { token });
+
   return res.json({
     data: {
       token,

@@ -4,6 +4,7 @@ const {
   createContacts,
   getContacts,
   me,
+  logout,
 } = require("../../controllers/user.controller");
 const { auth } = require("../../middlewares");
 const userRouter = express.Router();
@@ -21,6 +22,8 @@ userRouter.get(
 );
 
 userRouter.get("/me", tryCatchWrapper(auth), tryCatchWrapper(me));
+
+userRouter.get("/logout", tryCatchWrapper(auth), tryCatchWrapper(logout));
 
 module.exports = {
   userRouter,
