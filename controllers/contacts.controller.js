@@ -73,7 +73,7 @@ async function uploadImage(req, res, next) {
   const { filename } = req.file;
 
   const tmpPath = path.resolve(__dirname, "../tmp", filename);
-  const publicPath = path.resolve(__dirname, "../public/avatars", filename);
+  const publicPath = path.resolve(__dirname, "../public/photos", filename);
 
   try {
     await fs.rename(tmpPath, publicPath);
@@ -86,12 +86,16 @@ async function uploadImage(req, res, next) {
   const contact = await Contacts.findByIdAndUpdate(
     contactId,
     {
-      avatarURL: `/public/avatars/${filename}`,
+      photoURL: `/public/photos/${filename}`,
     },
     { new: true }
   );
+  console.log(
+    "🚀 ~ file: contacts.controller.js:93 ~ uploadImage ~ contact",
+    contact
+  );
 
-  return res.json({ avatarURL: contact.avatarURL });
+  return res.json({ photoURL: contact.photoURL });
 }
 
 module.exports = {

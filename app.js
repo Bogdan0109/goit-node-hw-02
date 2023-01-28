@@ -17,7 +17,7 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
-app.use("/public/avatars", express.static("public/avatars"));
+app.use("/public", express.static("public"));
 
 app.use("/api/contacts", contactsRouter);
 app.use("/api/auth", authRouter);

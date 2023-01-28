@@ -16,7 +16,7 @@ const schema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    avatarURL: {
+    photoURL: {
       type: String,
     },
   },

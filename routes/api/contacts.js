@@ -40,8 +40,8 @@ contactsRouter.patch(
 );
 
 contactsRouter.patch(
-  "/:id/image",
-  upload.single("image"),
+  "/:id/photos",
+  upload.single("photos"),
   tryCatchWrapper(uploadImage)
 );
 

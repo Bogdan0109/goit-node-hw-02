@@ -5,8 +5,9 @@ const {
   getContacts,
   me,
   logout,
+  uploadImage,
 } = require("../../controllers/user.controller");
-const { auth } = require("../../middlewares");
+const { auth, upload } = require("../../middlewares");
 const userRouter = express.Router();
 
 userRouter.post(
@@ -24,6 +25,13 @@ userRouter.get(
 userRouter.get("/me", tryCatchWrapper(auth), tryCatchWrapper(me));
 
 userRouter.get("/logout", tryCatchWrapper(auth), tryCatchWrapper(logout));
+
+userRouter.patch(
+  "/:id/avatars",
+  tryCatchWrapper(auth),
+  upload.single("avatars"),
+  tryCatchWrapper(uploadImage)
+);
 
 module.exports = {
   userRouter,
