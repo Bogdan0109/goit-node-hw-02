@@ -3,6 +3,10 @@ const { HttpError } = require("../helpers/index.js");
 // const Joi = require("joi");
 const { Contacts } = require("../models/contact");
 
+const path = require("path");
+
+const fs = require("fs/promises");
+
 async function listContacts(req, res, next) {
   const { limit = 5, page = 1 } = req.query;
   const skip = (page - 1) * limit;
@@ -14,7 +18,7 @@ async function listContacts(req, res, next) {
 async function getContactById(req, res, next) {
   try {
     const { contactId } = req.params;
-   
+
     const contact = await Contacts.findById(contactId);
     return res.json(contact);
   } catch (error) {
@@ -64,6 +68,36 @@ async function updateContactFavorite(req, res, next) {
   }
 }
 
+async function uploadImage(req, res, next) {
+  console.log("req.file", req.file);
+  const { filename } = req.file;
+
+  const tmpPath = path.resolve(__dirname, "../tmp", filename);
+  const publicPath = path.resolve(__dirname, "../public/photos", filename);
+
+  try {
+    await fs.rename(tmpPath, publicPath);
+  } catch (error) {
+    fs.unlink(tmpPath);
+    throw error;
+  }
+
+  const contactId = req.params.id;
+  const contact = await Contacts.findByIdAndUpdate(
+    contactId,
+    {
+      photoURL: `/public/photos/${filename}`,
+    },
+    { new: true }
+  );
+  console.log(
+    "🚀 ~ file: contacts.controller.js:93 ~ uploadImage ~ contact",
+    contact
+  );
+
+  return res.json({ photoURL: contact.photoURL });
+}
+
 module.exports = {
   listContacts,
   getContactById,
@@ -71,4 +105,5 @@ module.exports = {
   removeContact,
   updateContact,
   updateContactFavorite,
+  uploadImage,
 };

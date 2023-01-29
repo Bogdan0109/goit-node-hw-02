@@ -16,6 +16,9 @@ const schema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    photoURL: {
+      type: String,
+    },
   },
   { versionKey: false }
 );

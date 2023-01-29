@@ -1,5 +1,6 @@
 const { Users } = require("../models/users");
 const { HttpError } = require("../helpers");
+const gravatar = require("gravatar");
 
 const jwt = require("jsonwebtoken");
 
@@ -37,6 +38,8 @@ async function signup(req, res, next) {
 async function login(req, res, next) {
   const { email, password } = req.body;
 
+  const url = gravatar.url(email);
+
   const storedUsers = await Users.findOne({
     email,
   });
@@ -55,10 +58,12 @@ async function login(req, res, next) {
     expiresIn: "1h",
   });
 
+  await Users.findByIdAndUpdate(storedUsers._id, { token, avatarURL: url });
+
   return res.json({
     data: {
       token,
-      user: { email, password },
+      user: { email, password, avatarURL: url },
     },
   });
 }
