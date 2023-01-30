@@ -17,6 +17,7 @@ function validateBody(schema) {
 
 async function auth(req, res, next) {
   const authHeader = req.headers.authorization || "";
+
   const [type, token] = authHeader.split(" ");
 
   if (type !== "Bearer") {
@@ -46,6 +47,19 @@ async function auth(req, res, next) {
   next();
 }
 
+async function isLogin(req, res, next) {
+  const { _id: id, token } = req.user;
+  const user = await Users.findById(id);
+
+  if (user.token !== token) {
+    throw HttpError(401, "Not authorized");
+  }
+
+  req.user = user;
+
+  next();
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.resolve(__dirname, "../tmp"));
@@ -66,4 +80,5 @@ module.exports = {
   validateBody,
   auth,
   upload,
+  isLogin,
 };
