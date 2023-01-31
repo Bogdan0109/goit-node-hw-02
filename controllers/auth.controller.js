@@ -40,6 +40,8 @@ async function login(req, res, next) {
 
   const url = gravatar.url(email);
 
+  const { JWT_SECRET } = process.env;
+
   const storedUsers = await Users.findOne({
     email,
   });
@@ -54,7 +56,7 @@ async function login(req, res, next) {
     throw new HttpError(401, "password is not valid");
   }
 
-  const token = jwt.sign({ id: storedUsers._id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id: storedUsers._id }, JWT_SECRET, {
     expiresIn: "1h",
   });
 

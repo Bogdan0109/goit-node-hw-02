@@ -20,6 +20,8 @@ async function auth(req, res, next) {
 
   const [type, token] = authHeader.split(" ");
 
+  const { JWT_SECRET } = process.env;
+
   if (type !== "Bearer") {
     throw HttpError(401, "token type is not valid");
   }
@@ -29,7 +31,7 @@ async function auth(req, res, next) {
   }
 
   try {
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+    const { id } = jwt.verify(token, JWT_SECRET);
     const user = await Users.findById(id);
     user.token = token;
 
