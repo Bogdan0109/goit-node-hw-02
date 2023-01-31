@@ -68,18 +68,11 @@ async function uploadImage(req, res, next) {
   const { filename } = req.file;
 
   const tmpPath = path.resolve(__dirname, "../tmp", filename);
-
   const publicPath = path.resolve(__dirname, "../public/avatars", filename);
-
-  try {
-    await Jimp.read(`../tmp/${filename}`, (err, image) => {
-      if (err) throw err;
-      image.resize(250, 250).write(filename);
-    });
-  } catch (error) {
-    console.log("error", error);
-    next();
-  }
+  // console.log(
+  //   "🚀 ~ file: user.controller.js:72 ~ uploadImage ~ publicPath",
+  //   publicPath
+  // );
 
   try {
     await fs.rename(tmpPath, publicPath);
@@ -87,6 +80,13 @@ async function uploadImage(req, res, next) {
     fs.unlink(tmpPath);
     throw error;
   }
+
+  Jimp.read(publicPath, (error, image) => {
+    if (error) {
+      return next(error);
+    }
+    image.resize(250, 250).write(publicPath);
+  });
 
   const userId = req.params.id;
 
