@@ -27,11 +27,7 @@ async function signup(req, res, next) {
       },
     });
   } catch (error) {
-    if (error.message.includes("E11000 duplicate key error")) {
-      throw new HttpError(409, "Users with this email already exists");
-    }
-
-    throw error;
+    return res.status(409).json({ message: "missing field favorite" });
   }
 }
 

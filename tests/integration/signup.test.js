@@ -3,6 +3,7 @@ require("dotenv").config();
 const supertest = require("supertest");
 const mongoose = require("mongoose");
 const { app } = require("../../app");
+
 const { Users } = require("../../models/users");
 
 mongoose.set("strictQuery", false);
@@ -27,7 +28,7 @@ describe("signup", () => {
     });
 
     expect(response.statusCode).toBe(201);
-    expect(response.body.data.user.email).toBe("testUser1@gmail.com");
+    expect(response.body.data.users.email).toBe("example@example.com");
   });
 
   it("should not signup the same user 2 times", async () => {
