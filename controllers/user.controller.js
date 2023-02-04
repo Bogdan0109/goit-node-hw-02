@@ -5,6 +5,8 @@ const fs = require("fs/promises");
 
 const Jimp = require("jimp");
 
+const { BadRequest } = require("http-errors");
+
 async function createContacts(req, res, next) {
   const { user } = req;
   const { id: contactId } = req.body;
@@ -101,10 +103,31 @@ async function uploadImage(req, res, next) {
   return res.status(200).json({ avatarURL: user.avatarURL });
 }
 
+async function verifyEmail(req, res, next) {
+  const { token } = req.params;
+  const user = await Users.findOne({
+    verificationToken: token,
+  });
+
+  if (!user) {
+    throw BadRequest("Verify token is not valid!");
+  }
+
+  await Users.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationToken: null,
+  });
+
+  return res.json({
+    message: "Success",
+  });
+}
+
 module.exports = {
   createContacts,
   getContacts,
   me,
   logout,
   uploadImage,
+  verifyEmail,
 };

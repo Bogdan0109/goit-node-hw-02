@@ -6,6 +6,7 @@ const {
   me,
   logout,
   uploadImage,
+  verifyEmail,
 } = require("../../controllers/user.controller");
 const { auth, upload, isLogin } = require("../../middlewares");
 const userRouter = express.Router();
@@ -40,6 +41,8 @@ userRouter.patch(
   upload.single("avatars"),
   tryCatchWrapper(uploadImage)
 );
+
+userRouter.get("/verify/:token", tryCatchWrapper(verifyEmail));
 
 module.exports = {
   userRouter,

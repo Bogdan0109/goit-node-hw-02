@@ -15,19 +15,19 @@ async function signup(req, res, next) {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   try {
-    const verifyToken = v4();
+    const verificationToken = v4();
 
     const savedUsers = await Users.create({
       email,
       password: hashedPassword,
-      verifyToken,
-      verified: false,
+      verify: false,
+      verificationToken,
     });
 
     await sendMail({
       to: email,
       subject: "Please confirm your email",
-      html: `<a href="localhost:3001/api/users/verify/${verifyToken}">Confirm your email</a>`,
+      html: `<a href="localhost:3001/api/users/verify/${verificationToken}">Confirm your email</a>`,
     });
 
     res.status(201).json({
@@ -61,6 +61,13 @@ async function login(req, res, next) {
 
   if (!storedUsers) {
     throw new HttpError(401, "email is not valid");
+  }
+
+  if (!storedUsers.verify) {
+    throw new HttpError(
+      401,
+      "email is not verified! Please check your mail box"
+    );
   }
 
   const isPasswordValid = await bcrypt.compare(password, storedUsers.password);

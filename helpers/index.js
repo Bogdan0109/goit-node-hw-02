@@ -19,7 +19,6 @@ function HttpError(status, message) {
 }
 
 async function sendMail({ to, html, subject }) {
-  console.log("🚀 ~ file: index.js:22 ~ sendMail ~ html", html);
   try {
     sendGrid.setApiKey(SEND_GRID_KEY);
 
