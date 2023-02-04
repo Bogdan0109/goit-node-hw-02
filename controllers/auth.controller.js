@@ -27,11 +27,7 @@ async function signup(req, res, next) {
       },
     });
   } catch (error) {
-    if (error.message.includes("E11000 duplicate key error")) {
-      throw new HttpError(409, "Users with this email already exists");
-    }
-
-    throw error;
+    return res.status(409).json({ message: "missing field favorite" });
   }
 }
 
@@ -39,6 +35,8 @@ async function login(req, res, next) {
   const { email, password } = req.body;
 
   const url = gravatar.url(email);
+
+  const { JWT_SECRET } = process.env;
 
   const storedUsers = await Users.findOne({
     email,
@@ -54,7 +52,7 @@ async function login(req, res, next) {
     throw new HttpError(401, "password is not valid");
   }
 
-  const token = jwt.sign({ id: storedUsers._id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id: storedUsers._id }, JWT_SECRET, {
     expiresIn: "1h",
   });
 

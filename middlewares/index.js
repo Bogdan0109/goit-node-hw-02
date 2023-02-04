@@ -17,7 +17,10 @@ function validateBody(schema) {
 
 async function auth(req, res, next) {
   const authHeader = req.headers.authorization || "";
+
   const [type, token] = authHeader.split(" ");
+
+  const { JWT_SECRET } = process.env;
 
   if (type !== "Bearer") {
     throw HttpError(401, "token type is not valid");
@@ -28,7 +31,7 @@ async function auth(req, res, next) {
   }
 
   try {
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+    const { id } = jwt.verify(token, JWT_SECRET);
     const user = await Users.findById(id);
     user.token = token;
 
@@ -42,6 +45,19 @@ async function auth(req, res, next) {
     }
     throw error;
   }
+
+  next();
+}
+
+async function isLogin(req, res, next) {
+  const { _id: id, token } = req.user;
+  const user = await Users.findById(id);
+
+  if (user.token !== token) {
+    throw HttpError(401, "Not authorized");
+  }
+
+  req.user = user;
 
   next();
 }
@@ -66,4 +82,5 @@ module.exports = {
   validateBody,
   auth,
   upload,
+  isLogin,
 };

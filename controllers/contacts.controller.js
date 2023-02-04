@@ -90,10 +90,6 @@ async function uploadImage(req, res, next) {
     },
     { new: true }
   );
-  console.log(
-    "🚀 ~ file: contacts.controller.js:93 ~ uploadImage ~ contact",
-    contact
-  );
 
   return res.json({ photoURL: contact.photoURL });
 }
