@@ -1,6 +1,8 @@
 const { Users } = require("../models/users");
-const { HttpError } = require("../helpers");
+const { HttpError, sendMail } = require("../helpers");
 const gravatar = require("gravatar");
+const { Conflict } = require("http-errors");
+const { v4 } = require("uuid");
 
 const jwt = require("jsonwebtoken");
 
@@ -13,9 +15,19 @@ async function signup(req, res, next) {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   try {
+    const verifyToken = v4();
+
     const savedUsers = await Users.create({
       email,
       password: hashedPassword,
+      verifyToken,
+      verified: false,
+    });
+
+    await sendMail({
+      to: email,
+      subject: "Please confirm your email",
+      html: `<a href="localhost:3001/api/users/verify/${verifyToken}">Confirm your email</a>`,
     });
 
     res.status(201).json({
@@ -27,6 +39,11 @@ async function signup(req, res, next) {
       },
     });
   } catch (error) {
+    if (error.message.includes("E11000 duplicate key error")) {
+      // throw new HttpError(409, "User with this email already exists");
+      throw Conflict("User with this email already exists!");
+    }
+
     return res.status(409).json({ message: "missing field favorite" });
   }
 }

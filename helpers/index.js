@@ -1,3 +1,7 @@
+const sendGrid = require("@sendgrid/mail");
+
+const { SEND_GRID_KEY } = process.env;
+
 function tryCatchWrapper(enpointFn) {
   return async (req, res, next) => {
     try {
@@ -14,7 +18,27 @@ function HttpError(status, message) {
   return err;
 }
 
+async function sendMail({ to, html, subject }) {
+  console.log("🚀 ~ file: index.js:22 ~ sendMail ~ html", html);
+  try {
+    sendGrid.setApiKey(SEND_GRID_KEY);
+
+    const email = {
+      from: "brovarecbogban@gmail.com",
+      to,
+      subject,
+      html,
+    };
+
+    const response = await sendGrid.send(email);
+    console.log(response);
+  } catch (error) {
+    console.error("App error:", error);
+  }
+}
+
 module.exports = {
   tryCatchWrapper,
   HttpError,
+  sendMail,
 };
