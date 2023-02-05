@@ -29,7 +29,7 @@ async function signup(req, res, next) {
     await sendMail({
       to: email,
       subject: "Please confirm your email",
-      html: `<a href="localhost:3000/api/users/verify/${verificationToken}">Confirm your email</a>`,
+      html: `<a href="http://localhost:3000/api/users/verify/${verificationToken}">Confirm your email</a>`,
     });
 
     const url = gravatar.url(email);

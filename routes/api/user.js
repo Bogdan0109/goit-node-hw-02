@@ -7,6 +7,7 @@ const {
   logout,
   uploadImage,
   verifyEmail,
+  resendEmail,
 } = require("../../controllers/user.controller");
 const {
   auth,
@@ -46,7 +47,9 @@ userRouter.patch(
   tryCatchWrapper(uploadImage)
 );
 
-userRouter.get("/verify/:token", tryCatchWrapper(verifyEmail));
+userRouter.get("/verify/:verificationToken", tryCatchWrapper(verifyEmail));
+
+userRouter.post("/verify", tryCatchWrapper(resendEmail));
 
 module.exports = {
   userRouter,

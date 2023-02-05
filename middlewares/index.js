@@ -58,7 +58,7 @@ async function userIsAuthorizedAndVerify(req, res, next) {
   }
 
   if (!user.verify) {
-    throw HttpError(401, "Verification user Not Found");
+    throw HttpError(401, "email is not verified! Please check your mail box");
   }
 
   req.user = user;
