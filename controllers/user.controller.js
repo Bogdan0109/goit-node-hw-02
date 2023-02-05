@@ -2,8 +2,9 @@
 const { Users } = require("../models/users");
 const path = require("path");
 const fs = require("fs/promises");
-
 const Jimp = require("jimp");
+const { BadRequest } = require("http-errors");
+const { sendMail } = require("../helpers");
 
 async function createContacts(req, res, next) {
   const { user } = req;
@@ -101,10 +102,62 @@ async function uploadImage(req, res, next) {
   return res.status(200).json({ avatarURL: user.avatarURL });
 }
 
+async function verifyEmail(req, res, next) {
+  const { verificationToken: token } = req.params;
+
+  const user = await Users.findOne({
+    verificationToken: token,
+  });
+
+  if (!user) {
+    throw BadRequest("Verify token is not valid!");
+  }
+
+  await Users.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationToken: null,
+  });
+
+  return res.json({
+    message: "Success",
+  });
+}
+
+const resendEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await Users.findOne({ email });
+
+    if (!user) {
+      res.status(400).json({ message: "missing required field email" });
+    }
+
+    if (user.verify) {
+      res.status(400).json({
+        message: "Verification has already been passed",
+      });
+    }
+
+    await sendMail({
+      to: email,
+      subject: "Please, verify your email",
+      html: `<a href="http://localhost:3000/api/users/verify/${user.verificationToken}">Email verification</a>`,
+    });
+
+    res.status(200).json({
+      message: "Verification email sent",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createContacts,
   getContacts,
   me,
   logout,
   uploadImage,
+  verifyEmail,
+  resendEmail,
 };
