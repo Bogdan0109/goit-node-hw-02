@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 
 const bcrypt = require("bcrypt");
 
+const { JWT_SECRET } = process.env;
+
 async function signup(req, res, next) {
   const { email, password } = req.body;
 
@@ -27,14 +29,22 @@ async function signup(req, res, next) {
     await sendMail({
       to: email,
       subject: "Please confirm your email",
-      html: `<a href="localhost:3001/api/users/verify/${verificationToken}">Confirm your email</a>`,
+      html: `<a href="localhost:3000/api/users/verify/${verificationToken}">Confirm your email</a>`,
     });
+
+    const url = gravatar.url(email);
+
+    const token = jwt.sign({ id: savedUsers._id }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    await Users.findByIdAndUpdate(savedUsers._id, { token, avatarURL: url });
 
     res.status(201).json({
       data: {
         users: {
-          email,
-          id: savedUsers._id,
+          token,
+          user: { email, password, avatarURL: url },
         },
       },
     });
@@ -52,8 +62,6 @@ async function login(req, res, next) {
   const { email, password } = req.body;
 
   const url = gravatar.url(email);
-
-  const { JWT_SECRET } = process.env;
 
   const storedUsers = await Users.findOne({
     email,

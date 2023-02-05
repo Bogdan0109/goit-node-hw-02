@@ -49,12 +49,16 @@ async function auth(req, res, next) {
   next();
 }
 
-async function isLogin(req, res, next) {
+async function userIsAuthorizedAndVerify(req, res, next) {
   const { _id: id, token } = req.user;
   const user = await Users.findById(id);
 
   if (user.token !== token) {
     throw HttpError(401, "Not authorized");
+  }
+
+  if (!user.verify) {
+    throw HttpError(401, "Verification user Not Found");
   }
 
   req.user = user;
@@ -82,5 +86,5 @@ module.exports = {
   validateBody,
   auth,
   upload,
-  isLogin,
+  userIsAuthorizedAndVerify,
 };
